@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"git.sr.ht/~spc/go-log"
@@ -90,6 +92,17 @@ func detectPackageManager() (PackageManager, error) {
 	case "fedora":
 		return &PackageManagerDnf{}, nil
 	case "centos", "rhel":
+		ver := strings.Split(si.OS.Version, ".")
+		if len(ver) == 0 {
+			return nil, fmt.Errorf("cannot split version: %v", si.OS.Version)
+		}
+		major, err := strconv.ParseInt(ver[0], 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("cannot parse major version component: %w", err)
+		}
+		if major >= 8 {
+			return &PackageManagerDnf{}, nil
+		}
 		return &PackageManagerYum{}, nil
 	case "debian", "ubuntu":
 		return &PackageManagerApt{}, nil
