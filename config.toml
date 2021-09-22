@@ -1,2 +1,5 @@
+# regular expression patterns to allow package operations
 allow-pattern = [".*"]
+
+# log verbosity level (error (default), warn, info, debug, trace)
 log-level = "error"
