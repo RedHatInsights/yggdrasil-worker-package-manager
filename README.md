@@ -10,7 +10,7 @@ packages that match one of the provided `allow-pattern` regular expressions.
 Compile the worker and install it into the `yggd` worker directory:
 
 ```
-go build ./ -o yggd-package-manager-worker
+go build -o yggd-package-manager-worker .
 install -D -m 755 yggd-package-manager-worker $(pkg-config --variable=workerexecdir yggdrasil)/
 ```
 
