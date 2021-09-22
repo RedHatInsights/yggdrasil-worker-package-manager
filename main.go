@@ -23,12 +23,12 @@ func main() {
 
 	var (
 		socketAddr    = ""
-		logLevel      = flagvar.Enum{Choices: []string{"error", "warning", "info", "debug", "trace"}}
+		logLevel      = flagvar.Enum{Choices: []string{"error", "warn", "info", "debug", "trace"}}
 		allowPatterns = flagvar.Regexps{}
 	)
 
 	fs.StringVar(&socketAddr, "socket-addr", "", "dispatcher socket address")
-	fs.Var(&logLevel, "log-level", "log verbosity level (error (default), warning, info, debug, trace)")
+	fs.Var(&logLevel, "log-level", "log verbosity level (error (default), warn, info, debug, trace)")
 	fs.Var(&allowPatterns, "allow-pattern", "regular expression pattern to allow package operations\n(can be specified multiple times)")
 	_ = fs.String("config", "", "path to `file` containing configuration values (optional)")
 
