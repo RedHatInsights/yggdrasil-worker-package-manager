@@ -39,7 +39,7 @@ func main() {
 	if logLevel.Value != "" {
 		l, err := log.ParseLevel(logLevel.Value)
 		if err != nil {
-			log.Fatal("cannot parse log level: %v", err)
+			log.Fatalf("cannot parse log level: %v", err)
 		}
 		log.SetLevel(l)
 	}
