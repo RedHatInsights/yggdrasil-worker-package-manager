@@ -44,6 +44,10 @@ func main() {
 		log.SetLevel(l)
 	}
 
+	if log.CurrentLevel() >= log.LevelDebug {
+		log.SetFlags(log.LstdFlags | log.Llongfile)
+	}
+
 	// Dial the dispatcher on its well-known address.
 	conn, err := grpc.Dial(socketAddr, grpc.WithInsecure())
 	if err != nil {
