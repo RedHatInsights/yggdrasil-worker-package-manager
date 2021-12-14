@@ -56,6 +56,9 @@ func (s *Server) Send(ctx context.Context, d *protocol.Data) (*protocol.Receipt,
 			stdout, stderr, code, err = s.pm.Install(m.Name)
 			if err != nil {
 				log.Errorf("cannot install package: %v", err)
+				log.Debugf("program exited with code %v", code)
+				log.Debugf("program stderr:\n%v", string(stderr))
+				log.Tracef("program stdout:\n%v", string(stdout))
 				return
 			}
 			log.Infof("installed package: %v", m.Name)
@@ -63,6 +66,9 @@ func (s *Server) Send(ctx context.Context, d *protocol.Data) (*protocol.Receipt,
 			stdout, stderr, code, err = s.pm.Uninstall(m.Name)
 			if err != nil {
 				log.Errorf("cannot remove package: %v", err)
+				log.Debugf("program exited with code %v", code)
+				log.Debugf("program stderr:\n%v", string(stderr))
+				log.Tracef("program stdout:\n%v", string(stdout))
 				return
 			}
 			log.Infof("removed package: %v", m.Name)
