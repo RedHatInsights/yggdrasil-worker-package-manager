@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-	fs := flag.NewFlagSet("ygg-package-manager-worker", flag.ExitOnError)
+	fs := flag.NewFlagSet("yggd-package-manager-worker", flag.ExitOnError)
 
 	var (
 		socketAddr    = ""
