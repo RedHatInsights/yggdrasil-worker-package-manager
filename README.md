@@ -1,9 +1,10 @@
 # yggdrasil-worker-package-manager
 
 `yggdrasil-worker-package-manager` is a simple package manager yggd worker. It
-knows how to install and remove packages, and does rudamentary detection of the
-host its running on to guess the package manager to use. It only installs
-packages that match one of the provided `allow-pattern` regular expressions.
+knows how to install and remove packages, add, remove, enable and disable
+repositories, and does rudamentary detection of the host its running on to guess
+the package manager to use. It only installs packages that match one of the
+provided `allow-pattern` regular expressions.
 
 # Installation
 
@@ -32,19 +33,50 @@ directive. It expects to receive messages with the following JSON schema:
 {
     "type": "object",
     "properties": {
-        "command": { "enum": ["install", "remove"] },
-        "name": { "type": "string" }
+        "command": { "enum": ["install", "remove", "enable-repo", "disable-repo", "add-repo", "remove-repo"] },
+        "name": { "type": "string" },
+        "content": { "type": "string" }
     },
     "required": ["command", "name" ]
 }
 ```
 
-For example, to tell `yggd-package-manager-worker` to install "vim", send it:
+## Examples
+
+### Install `vim`
 
 ```json
 {
     "command": "install",
     "name": "vim"
+}
+```
+
+### Enable "updates-testing" repository
+
+```json
+{
+    "command": "enable-repo",
+    "name": "updates-testing"
+}
+```
+
+### Add custom repository on a dnf or yum client
+
+```json
+{
+    "command": "add-repo",
+    "name": "my-custom-repo",
+    "content": "[my-custom-repo]\nbaseurl=http://servername/path/to/repo\nenabled=1"
+}
+```
+
+### Add custom repository on an apt client
+
+```json
+{
+    "command": "add-repo",
+    "name": "deb http://servername path component"
 }
 ```
 

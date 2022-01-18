@@ -16,6 +16,7 @@ import (
 type Message struct {
 	Command string `json:"command"`
 	Name    string `json:"name"`
+	Content []byte `json:"content"`
 }
 
 type Output struct {
@@ -43,16 +44,16 @@ func (s *Server) Send(ctx context.Context, d *protocol.Data) (*protocol.Receipt,
 		}
 		log.Debugf("received command: %v", m)
 
-		if !s.packageAllowed(m.Name) {
-			log.Errorf("cannot install %v: does not match an allow pattern", m.Name)
-			return
-		}
-
 		var stdout, stderr []byte
 		var code int
 		var err error
 		switch m.Command {
 		case "install":
+			if !s.packageAllowed(m.Name) {
+				log.Errorf("cannot install %v: does not match an allow pattern", m.Name)
+				return
+			}
+
 			stdout, stderr, code, err = s.pm.Install(m.Name)
 			if err != nil {
 				log.Errorf("cannot install package: %v", err)
@@ -63,6 +64,11 @@ func (s *Server) Send(ctx context.Context, d *protocol.Data) (*protocol.Receipt,
 			}
 			log.Infof("installed package: %v", m.Name)
 		case "remove":
+			if !s.packageAllowed(m.Name) {
+				log.Errorf("cannot remove %v: does not match an allow pattern", m.Name)
+				return
+			}
+
 			stdout, stderr, code, err = s.pm.Uninstall(m.Name)
 			if err != nil {
 				log.Errorf("cannot remove package: %v", err)
@@ -72,6 +78,42 @@ func (s *Server) Send(ctx context.Context, d *protocol.Data) (*protocol.Receipt,
 				return
 			}
 			log.Infof("removed package: %v", m.Name)
+		case "enable-repo":
+			stdout, stderr, code, err = s.pm.EnableRepo(m.Name)
+			if err != nil {
+				log.Errorf("cannot enable repository: %v", err)
+				log.Debugf("program exited with code %v", code)
+				log.Debugf("program stderr:\n%v", string(stderr))
+				log.Debugf("program stdout:\n%v", string(stdout))
+				return
+			}
+		case "disable-repo":
+			stdout, stderr, code, err = s.pm.DisableRepo(m.Name)
+			if err != nil {
+				log.Errorf("cannot disable repository: %v", err)
+				log.Debugf("program exited with code %v", code)
+				log.Debugf("program stderr:\n%v", string(stderr))
+				log.Debugf("program stdout:\n%v", string(stdout))
+				return
+			}
+		case "add-repo":
+			stdout, stderr, code, err = s.pm.AddRepo(m.Name, m.Content)
+			if err != nil {
+				log.Errorf("cannot add repository: %v", err)
+				log.Debugf("program exited with code %v", code)
+				log.Debugf("program stderr:\n%v", string(stderr))
+				log.Debugf("program stdout:\n%v", string(stdout))
+				return
+			}
+		case "remove-repo":
+			stdout, stderr, code, err = s.pm.RemoveRepo(m.Name)
+			if err != nil {
+				log.Errorf("cannot remove repository: %v", err)
+				log.Debugf("program exited with code %v", code)
+				log.Debugf("program stderr:\n%v", string(stderr))
+				log.Debugf("program stdout:\n%v", string(stdout))
+				return
+			}
 		default:
 			log.Errorf("cannot perform command: %v", m.Command)
 			return

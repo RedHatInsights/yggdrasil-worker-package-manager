@@ -14,9 +14,17 @@ type Uninstaller interface {
 	Uninstall(name string) (stdout, stderr []byte, code int, err error)
 }
 
+type RepositoryManager interface {
+	AddRepo(name string, content []byte) (stdout, stderr []byte, code int, err error)
+	RemoveRepo(name string) (stdout, stderr []byte, code int, err error)
+	EnableRepo(name string) (stdout, stderr []byte, code int, err error)
+	DisableRepo(name string) (stdout, stderr []byte, code int, err error)
+}
+
 type PackageManager interface {
 	Installer
 	Uninstaller
+	RepositoryManager
 }
 
 func run(cmd *exec.Cmd) (stdout, stderr []byte, code int, err error) {
