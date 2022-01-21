@@ -2,7 +2,7 @@
 
 `yggdrasil-worker-package-manager` is a simple package manager yggd worker. It
 knows how to install and remove packages, add, remove, enable and disable
-repositories, and does rudamentary detection of the host its running on to guess
+repositories, and does rudimentary detection of the host it is running on to guess
 the package manager to use. It only installs packages that match one of the
 provided `allow-pattern` regular expressions.
 
