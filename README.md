@@ -11,7 +11,7 @@ provided `allow-pattern` regular expressions.
 Compile the worker and install it into the `yggd` worker directory:
 
 ```
-go build -o yggd-package-manager-worker .
+go build -o yggd-package-manager-worker -ldflags "-X main.semVer=$(git describe --abbrev=0 --tags) -X main.sha1Ver=$(git rev-parse --short HEAD)" .
 install -D -m 755 yggd-package-manager-worker $(pkg-config --variable=workerexecdir yggdrasil)/
 ```
 

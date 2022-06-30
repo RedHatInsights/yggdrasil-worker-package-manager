@@ -22,6 +22,11 @@ import (
 	"google.golang.org/grpc"
 )
 
+var (
+	semVer  string
+	sha1Ver string
+)
+
 func main() {
 	fs := flag.NewFlagSet(filepath.Base(os.Args[0]), flag.ExitOnError)
 
@@ -29,15 +34,22 @@ func main() {
 		socketAddr    = ""
 		logLevel      = flagvar.Enum{Choices: []string{"error", "warn", "info", "debug", "trace"}}
 		allowPatterns = flagvar.Regexps{}
+		version       = false
 	)
 
 	fs.StringVar(&socketAddr, "socket-addr", "", "dispatcher socket address")
 	fs.Var(&logLevel, "log-level", "log verbosity level (error (default), warn, info, debug, trace)")
 	fs.Var(&allowPatterns, "allow-pattern", "regular expression pattern to allow package operations\n(can be specified multiple times)")
+	fs.BoolVar(&version, "version", false, "show version info")
 	_ = fs.String("config", filepath.Join(yggdrasil.SysconfDir, yggdrasil.LongName, "workers", fs.Name()+".toml"), "path to `file` containing configuration values (optional)")
 
-	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix("YGG"), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser)); err != nil {
+	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix("YGG"), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser), ff.WithAllowMissingConfigFile(true)); err != nil {
 		log.Fatal(err)
+	}
+
+	if version {
+		fmt.Println(strings.Join([]string{semVer, sha1Ver}, "-"))
+		os.Exit(0)
 	}
 
 	if logLevel.Value != "" {
@@ -65,7 +77,7 @@ func main() {
 	defer cancel()
 
 	// Register as a handler of the "package-manager" type.
-	r, err := c.Register(ctx, &pb.RegistrationRequest{Handler: "package-manager", Pid: int64(os.Getpid())})
+	r, err := c.Register(ctx, &pb.RegistrationRequest{Handler: "package-manager", Pid: int64(os.Getpid()), Features: map[string]string{"version": strings.Join([]string{semVer, sha1Ver}, "-")}})
 	if err != nil {
 		log.Fatal(err)
 	}
