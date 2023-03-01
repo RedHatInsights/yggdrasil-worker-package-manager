@@ -4,6 +4,10 @@ go = find_program('go')
 
 dbus = dependency('dbus-1')
 
+if get_option('vendor')
+  meson.add_dist_script(join_paths('build-aux', 'vendor.sh'))
+endif
+
 config_data = configuration_data({
   'libexecdir': join_paths(get_option('prefix'), get_option('libexecdir')),
   'configdir': join_paths(get_option('sysconfdir'), meson.project_name()),

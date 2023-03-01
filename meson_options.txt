@@ -1,0 +1,1 @@
+option('vendor', type: 'boolean', value: false, description: 'Bundle go module dependencies in the vendor directory')
