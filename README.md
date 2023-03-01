@@ -8,25 +8,36 @@ provided `allow-pattern` regular expressions.
 
 # Installation
 
-Compile the worker and install it into the `yggd` worker directory:
+The easiest way to compile and install `yggdrasil-worker-package-manager` is
+using `meson`. Because it runs as a bus-activatable D-Bus service, files must be
+installed in specific directories.
+
+Generally, it is recommended to follow your distribution's packaging guidelines
+for compiling Go programs and installing projects using `meson`. What follows is a
+generally acceptable set of steps to setup, compile and install yggdrasil using
+`meson`.
 
 ```
-go build -o yggd-package-manager-worker -ldflags "-X main.semVer=$(git describe --abbrev=0 --tags) -X main.sha1Ver=$(git rev-parse --short HEAD)" .
-install -D -m 755 yggd-package-manager-worker $(pkg-config --variable=workerexecdir yggdrasil)/
+# Set up the project according to distribution-specific directory locations
+meson setup --prefix /usr/local --sysconfdir /etc --localstatedir /var builddir
+# Compile
+meson compile -C builddir
+# Install
+meson install -C builddir
 ```
+
+`meson` includes an optional `--destdir` to its `install` subcommand to aid in
+packaging.
 
 # Configuration
 
-Default configuration values are documented in `config.toml`. To adjust any
-configuration values, edit `config.toml` and copy into the `workerconfigdir`.
-
-```
-install -D -m 644 config.toml $(pkg-config --variable=workerconfdir)/package-manager.toml
-```
+Default configuration values are documented in `config.toml`. When installing
+using meson, this file is installed into `/etc/yggdrasil-worker-package-manager`
+by default.
 
 # Usage
 
-The worker will register itself as a handler for the "package-manager"
+The worker will register itself as a handler for the "package_manager"
 directive. It expects to receive messages with the following JSON schema:
 
 ```json

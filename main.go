@@ -29,8 +29,8 @@ type Message struct {
 }
 
 var (
-	semVer  string
-	sha1Ver string
+	Version   string
+	ConfigDir string
 )
 
 var (
@@ -45,14 +45,14 @@ func main() {
 	fs.Var(&logLevel, "log-level", "log verbosity level (error (default), warn, info, debug, trace)")
 	fs.Var(&allowPatterns, "allow-pattern", "regular expression pattern to allow package operations\n(can be specified multiple times)")
 	fs.BoolVar(&version, "version", false, "show version info")
-	_ = fs.String("config", filepath.Join("/etc", "yggdrasil", "workers", fs.Name()+".toml"), "path to `file` containing configuration values (optional)")
+	_ = fs.String("config", filepath.Join(ConfigDir, "config.toml"), "path to `file` containing configuration values (optional)")
 
 	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarNoPrefix(), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser), ff.WithAllowMissingConfigFile(true)); err != nil {
 		log.Fatal(err)
 	}
 
 	if version {
-		fmt.Println(strings.Join([]string{semVer, sha1Ver}, "-"))
+		fmt.Println(Version)
 		os.Exit(0)
 	}
 
@@ -68,7 +68,7 @@ func main() {
 		log.SetFlags(log.LstdFlags | log.Llongfile)
 	}
 
-	worker, err := worker.NewWorker("package_manager", false, map[string]string{"version": strings.Join([]string{semVer, sha1Ver}, "-")}, dataRx, nil)
+	worker, err := worker.NewWorker("package_manager", false, map[string]string{"version": Version}, dataRx, nil)
 	if err != nil {
 		log.Fatalf("error: cannot create worker: %v", err)
 	}
