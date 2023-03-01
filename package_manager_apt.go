@@ -9,7 +9,10 @@ import (
 
 const sourcesFile = "/etc/apt/sources.list.d/yggdrasil-package-manager.list"
 
-type PackageManagerApt struct{}
+type PackageManagerApt struct {
+	stdout chan []byte
+	stderr chan []byte
+}
 
 func (p *PackageManagerApt) Install(name string) (stdout, stderr []byte, code int, err error) {
 	return p.run("install", name)
@@ -60,10 +63,26 @@ func (p *PackageManagerApt) DisableRepo(sourceLine string) (stdout, stderr []byt
 	return nil, nil, 0, nil
 }
 
+func (p *PackageManagerApt) Stdout() chan []byte {
+	return p.stdout
+}
+
+func (p *PackageManagerApt) Stderr() chan []byte {
+	return p.stderr
+}
+
 func (p *PackageManagerApt) run(command string, args ...string) (stdout, stderr []byte, code int, err error) {
 	cmdargs := []string{"--assume-yes", command}
 	cmdargs = append(cmdargs, args...)
 	cmd := exec.Command("/usr/bin/apt-get", cmdargs...)
-	stdout, stderr, code, err = run(cmd)
+	stdout, stderr, code, err = run(cmd, p.sendStdout, p.sendStderr)
 	return
+}
+
+func (p *PackageManagerApt) sendStdout(buf []byte) {
+	p.stdout <- buf
+}
+
+func (p *PackageManagerApt) sendStderr(buf []byte) {
+	p.stderr <- buf
 }

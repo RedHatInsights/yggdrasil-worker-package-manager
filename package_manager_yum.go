@@ -7,7 +7,10 @@ import (
 	"path/filepath"
 )
 
-type PackageManagerYum struct{}
+type PackageManagerYum struct {
+	stdout chan []byte
+	stderr chan []byte
+}
 
 func (p *PackageManagerYum) Install(name string) (stdout, stderr []byte, code int, err error) {
 	return p.run("install", name)
@@ -27,14 +30,22 @@ func (p *PackageManagerYum) RemoveRepo(name string) (stdout, stderr []byte, code
 
 func (p *PackageManagerYum) EnableRepo(name string) (stdout, stderr []byte, code int, err error) {
 	cmd := exec.Command("/usr/bin/yum-config-manager", "--assumeyes", "--enable", name)
-	stdout, stderr, code, err = run(cmd)
+	stdout, stderr, code, err = run(cmd, p.sendStdout, p.sendStderr)
 	return
 }
 
 func (p *PackageManagerYum) DisableRepo(name string) (stdout, stderr []byte, code int, err error) {
 	cmd := exec.Command("/usr/bin/yum-config-manager", "--assumeyes", "--disable", name)
-	stdout, stderr, code, err = run(cmd)
+	stdout, stderr, code, err = run(cmd, p.sendStdout, p.sendStderr)
 	return
+}
+
+func (p *PackageManagerYum) Stdout() chan []byte {
+	return p.stdout
+}
+
+func (p *PackageManagerYum) Stderr() chan []byte {
+	return p.stderr
 }
 
 func (p *PackageManagerYum) run(command string, args ...string) (stdout, stderr []byte, code int, err error) {
@@ -42,6 +53,14 @@ func (p *PackageManagerYum) run(command string, args ...string) (stdout, stderr 
 	cmdargs = append(cmdargs, args...)
 
 	cmd := exec.Command("/usr/bin/yum", cmdargs...)
-	stdout, stderr, code, err = run(cmd)
+	stdout, stderr, code, err = run(cmd, p.sendStdout, p.sendStderr)
 	return
+}
+
+func (p *PackageManagerYum) sendStdout(buf []byte) {
+	p.stdout <- buf
+}
+
+func (p *PackageManagerYum) sendStderr(buf []byte) {
+	p.stderr <- buf
 }

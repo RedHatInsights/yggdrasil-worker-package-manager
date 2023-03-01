@@ -7,7 +7,10 @@ import (
 	"path/filepath"
 )
 
-type PackageManagerDnf struct{}
+type PackageManagerDnf struct {
+	stdout chan []byte
+	stderr chan []byte
+}
 
 func (p *PackageManagerDnf) Install(name string) (stdout, stderr []byte, code int, err error) {
 	return p.run("install", name)
@@ -33,11 +36,27 @@ func (p *PackageManagerDnf) DisableRepo(name string) (stdout, stderr []byte, cod
 	return p.run("config-manager", "--disable", name)
 }
 
+func (p *PackageManagerDnf) Stdout() chan []byte {
+	return p.stdout
+}
+
+func (p *PackageManagerDnf) Stderr() chan []byte {
+	return p.stderr
+}
+
 func (p *PackageManagerDnf) run(command string, args ...string) (stdout, stderr []byte, code int, err error) {
 	cmdargs := []string{"--assumeyes", command}
 	cmdargs = append(cmdargs, args...)
 
 	cmd := exec.Command("/usr/bin/dnf", cmdargs...)
-	stdout, stderr, code, err = run(cmd)
+	stdout, stderr, code, err = run(cmd, p.sendStdout, p.sendStderr)
 	return
+}
+
+func (p *PackageManagerDnf) sendStdout(buf []byte) {
+	p.stdout <- buf
+}
+
+func (p *PackageManagerDnf) sendStderr(buf []byte) {
+	p.stderr <- buf
 }

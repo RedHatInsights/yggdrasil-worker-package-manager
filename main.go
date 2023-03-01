@@ -1,49 +1,53 @@
 package main
 
 import (
-	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
-	"net"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
+	"syscall"
 
 	"git.sr.ht/~spc/go-log"
 
+	"github.com/google/uuid"
 	"github.com/peterbourgon/ff/v3"
 	"github.com/peterbourgon/ff/v3/fftoml"
-	"github.com/redhatinsights/yggdrasil"
-	pb "github.com/redhatinsights/yggdrasil/protocol"
+	"github.com/redhatinsights/yggdrasil/ipc"
+	"github.com/redhatinsights/yggdrasil/worker"
 	"github.com/sgreben/flagvar"
 	"github.com/zcalusic/sysinfo"
-	"google.golang.org/grpc"
 )
+
+type Message struct {
+	Command string `json:"command"`
+	Name    string `json:"name"`
+	Content []byte `json:"content"`
+}
 
 var (
 	semVer  string
 	sha1Ver string
 )
 
+var (
+	logLevel      = flagvar.Enum{Choices: []string{"error", "warn", "info", "debug", "trace"}}
+	allowPatterns = flagvar.Regexps{}
+	version       = false
+)
+
 func main() {
 	fs := flag.NewFlagSet(filepath.Base(os.Args[0]), flag.ExitOnError)
 
-	var (
-		socketAddr    = ""
-		logLevel      = flagvar.Enum{Choices: []string{"error", "warn", "info", "debug", "trace"}}
-		allowPatterns = flagvar.Regexps{}
-		version       = false
-	)
-
-	fs.StringVar(&socketAddr, "socket-addr", "", "dispatcher socket address")
 	fs.Var(&logLevel, "log-level", "log verbosity level (error (default), warn, info, debug, trace)")
 	fs.Var(&allowPatterns, "allow-pattern", "regular expression pattern to allow package operations\n(can be specified multiple times)")
 	fs.BoolVar(&version, "version", false, "show version info")
-	_ = fs.String("config", filepath.Join(yggdrasil.SysconfDir, yggdrasil.LongName, "workers", fs.Name()+".toml"), "path to `file` containing configuration values (optional)")
+	_ = fs.String("config", filepath.Join("/etc", "yggdrasil", "workers", fs.Name()+".toml"), "path to `file` containing configuration values (optional)")
 
-	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix("YGG"), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser), ff.WithAllowMissingConfigFile(true)); err != nil {
+	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarNoPrefix(), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser), ff.WithAllowMissingConfigFile(true)); err != nil {
 		log.Fatal(err)
 	}
 
@@ -64,44 +68,103 @@ func main() {
 		log.SetFlags(log.LstdFlags | log.Llongfile)
 	}
 
-	// Dial the dispatcher on its well-known address.
-	conn, err := grpc.Dial(socketAddr, grpc.WithInsecure())
+	worker, err := worker.NewWorker("package_manager", false, map[string]string{"version": strings.Join([]string{semVer, sha1Ver}, "-")}, dataRx, nil)
 	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-
-	// Create a dispatcher client
-	c := pb.NewDispatcherClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	// Register as a handler of the "package-manager" type.
-	r, err := c.Register(ctx, &pb.RegistrationRequest{Handler: "package-manager", Pid: int64(os.Getpid()), Features: map[string]string{"version": strings.Join([]string{semVer, sha1Ver}, "-")}})
-	if err != nil {
-		log.Fatal(err)
-	}
-	if !r.GetRegistered() {
-		log.Fatalf("handler registration failed: %v", err)
+		log.Fatalf("error: cannot create worker: %v", err)
 	}
 
-	// Listen on the provided socket address.
-	l, err := net.Listen("unix", r.GetAddress())
-	if err != nil {
-		log.Fatal(err)
+	// Set up a channel to receive the TERM or INT signal over and clean up
+	// before quitting.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+
+	if err := worker.Connect(quit); err != nil {
+		log.Fatalf("error: cannot connect: %v", err)
 	}
+}
+
+func dataRx(w *worker.Worker, addr string, id string, metadata map[string]string, data []byte) error {
+	log.Debugf("received message: %v", id)
+	log.Tracef("%v", data)
+
+	var m Message
+	if err := json.Unmarshal(data, &m); err != nil {
+		return fmt.Errorf("cannot unmarshal data: %v", err)
+	}
+	log.Debugf("received command: %v", m)
 
 	pm, err := detectPackageManager()
 	if err != nil {
 		log.Fatalf("cannot detect package manager: %v", err)
 	}
 
-	// Register as a Worker service with gRPC and start accepting connections.
-	s := grpc.NewServer()
-	pb.RegisterWorkerServer(s, &Server{dispatchAddr: socketAddr, allowPatterns: allowPatterns.Values, pm: pm})
-	if err := s.Serve(l); err != nil {
-		log.Fatal(err)
+	for _, ch := range []chan []byte{pm.Stdout(), pm.Stderr()} {
+		go func(ch chan []byte) {
+			for buf := range ch {
+				if err := w.EmitEvent(ipc.WorkerEventNameWorking, strings.TrimRight(string(buf), "\n\x00")); err != nil {
+					log.Errorf("cannot emit event: %v", err)
+				}
+			}
+		}(ch)
 	}
+
+	var outb, errb []byte
+	var code int
+	switch m.Command {
+	case "install":
+		if !packageAllowed(m.Name) {
+			return fmt.Errorf("cannot install %v: does not match an allow pattern", m.Name)
+		}
+		outb, errb, code, err = pm.Install(m.Name)
+	case "remove":
+		outb, errb, code, err = pm.Uninstall(m.Name)
+	case "enable-repo":
+		outb, errb, code, err = pm.EnableRepo(m.Name)
+	case "disable-repo":
+		outb, errb, code, err = pm.DisableRepo(m.Name)
+	case "add-repo":
+		outb, errb, code, err = pm.AddRepo(m.Name, m.Content)
+	case "remove-repo":
+		outb, errb, code, err = pm.RemoveRepo(m.Name)
+	default:
+		return fmt.Errorf("unknown command: %v", m.Command)
+	}
+
+	if err != nil {
+		switch e := err.(type) {
+		case ExitError:
+			log.Errorf("failed running command: %v", e)
+		default:
+			return fmt.Errorf("cannot run command: %v", e)
+		}
+	}
+
+	response := map[string]interface{}{
+		"code":   code,
+		"stdout": string(outb),
+		"stderr": string(errb),
+	}
+
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		return fmt.Errorf("cannot marshal json: %v", err)
+	}
+
+	_, _, _, err = w.Transmit(addr, uuid.New().String(), nil, responseData)
+	if err != nil {
+		return fmt.Errorf("cannot call Transmit: %v", err)
+	}
+
+	return nil
+}
+
+func packageAllowed(name string) bool {
+	for _, r := range allowPatterns.Values {
+		if r.Match([]byte(name)) {
+			return true
+		}
+	}
+	return false
 }
 
 func detectPackageManager() (PackageManager, error) {
@@ -121,11 +184,11 @@ func detectPackageManager() (PackageManager, error) {
 			return nil, fmt.Errorf("cannot parse major version component: %w", err)
 		}
 		if major >= 8 {
-			return &PackageManagerDnf{}, nil
+			return &PackageManagerDnf{make(chan []byte), make(chan []byte)}, nil
 		}
-		return &PackageManagerYum{}, nil
+		return &PackageManagerYum{make(chan []byte), make(chan []byte)}, nil
 	case "debian", "ubuntu":
-		return &PackageManagerApt{}, nil
+		return &PackageManagerApt{make(chan []byte), make(chan []byte)}, nil
 	default:
 		return nil, fmt.Errorf("unsupported OS: %v", si.OS.Vendor)
 	}
