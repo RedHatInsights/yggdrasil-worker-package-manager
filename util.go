@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -45,7 +44,7 @@ func writeLines(name string, lines []string, truncate bool) error {
 	}
 
 	if truncate {
-		return ioutil.WriteFile(name, data, 0644)
+		return os.WriteFile(name, data, 0644)
 	} else {
 		file, err := os.OpenFile(name, os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {

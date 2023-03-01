@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -21,7 +20,7 @@ func (p *PackageManagerDnf) Uninstall(name string) (stdout, stderr []byte, code 
 }
 
 func (p *PackageManagerDnf) AddRepo(name string, content []byte) (stdout, stderr []byte, code int, err error) {
-	return nil, nil, -1, ioutil.WriteFile(filepath.Join("/etc/yum.repos.d/", canonicalizeRepoName(name, ".repo")), content, 0644)
+	return nil, nil, -1, os.WriteFile(filepath.Join("/etc/yum.repos.d/", canonicalizeRepoName(name, ".repo")), content, 0644)
 }
 
 func (p *PackageManagerDnf) RemoveRepo(name string) (stdout, stderr []byte, code int, err error) {
