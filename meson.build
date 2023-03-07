@@ -13,13 +13,11 @@ config_data = configuration_data({
   'configdir': join_paths(get_option('sysconfdir'), meson.project_name()),
 })
 
-goldflags = ''
+goldflags = get_option('goldflags')
 goldflags += ' -X "main.Version=' + meson.project_version() + '"'
 goldflags += ' -X "main.ConfigDir=' + config_data.get('configdir') + '"'
 
-gobuildflags = [
-  '-buildmode=pie',
-]
+gobuildflags = get_option('gobuildflags')
 
 custom_target(meson.project_name(),
   build_always_stale: true,
