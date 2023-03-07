@@ -29,8 +29,8 @@ custom_target(meson.project_name(),
 
 configure_file(
   configuration: config_data,
-  input: 'com.redhat.yggdrasil.Worker1.package_manager.service.in',
-  output: 'com.redhat.yggdrasil.Worker1.package_manager.service',
+  input: 'com.redhat.Yggdrasil1.Worker1.package_manager.service.in',
+  output: 'com.redhat.Yggdrasil1.Worker1.package_manager.service',
   install: true,
   install_dir: dbus.get_pkgconfig_variable('system_bus_services_dir')
 )
