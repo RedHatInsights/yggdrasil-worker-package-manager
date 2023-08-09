@@ -83,7 +83,7 @@ func main() {
 	}
 }
 
-func dataRx(w *worker.Worker, addr string, id string, metadata map[string]string, data []byte) error {
+func dataRx(w *worker.Worker, addr string, id string, responseTo string, metadata map[string]string, data []byte) error {
 	log.Debugf("received message: %v", id)
 	log.Tracef("%v", data)
 
@@ -101,7 +101,7 @@ func dataRx(w *worker.Worker, addr string, id string, metadata map[string]string
 	for _, ch := range []chan []byte{pm.Stdout(), pm.Stderr()} {
 		go func(ch chan []byte) {
 			for buf := range ch {
-				if err := w.EmitEvent(ipc.WorkerEventNameWorking, strings.TrimRight(string(buf), "\n\x00")); err != nil {
+				if err := w.EmitEvent(ipc.WorkerEventNameWorking, id, strings.TrimRight(string(buf), "\n\x00")); err != nil {
 					log.Errorf("cannot emit event: %v", err)
 				}
 			}
@@ -150,7 +150,7 @@ func dataRx(w *worker.Worker, addr string, id string, metadata map[string]string
 		return fmt.Errorf("cannot marshal json: %v", err)
 	}
 
-	_, _, _, err = w.Transmit(addr, uuid.New().String(), nil, responseData)
+	_, _, _, err = w.Transmit(addr, uuid.New().String(), id, nil, responseData)
 	if err != nil {
 		return fmt.Errorf("cannot call Transmit: %v", err)
 	}
