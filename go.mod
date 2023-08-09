@@ -12,9 +12,7 @@ require (
 )
 
 require (
-	github.com/adrg/xdg v0.4.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
-	golang.org/x/sys v0.0.0-20211025201205-69cdffdb9359 // indirect
 )
