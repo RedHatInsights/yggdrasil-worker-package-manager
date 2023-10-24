@@ -4,11 +4,11 @@ go 1.18
 
 require (
 	git.sr.ht/~spc/go-log v0.0.0-20210611184941-ce2f05edb627
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.3.1
 	github.com/peterbourgon/ff/v3 v3.1.0
 	github.com/redhatinsights/yggdrasil v0.0.0-20231011123719-5130298ed3ac
 	github.com/sgreben/flagvar v1.10.1
-	github.com/zcalusic/sysinfo v0.9.5
+	github.com/zcalusic/sysinfo v1.0.2
 )
 
 require (
