@@ -84,6 +84,7 @@ func main() {
 		"package_manager",
 		false,
 		map[string]string{"version": Version},
+		nil,
 		dataRx,
 		nil,
 	)
@@ -126,7 +127,7 @@ func dataRx(
 	for _, ch := range []chan []byte{pm.Stdout(), pm.Stderr()} {
 		go func(ch chan []byte) {
 			for buf := range ch {
-				if err := w.EmitEvent(ipc.WorkerEventNameWorking, id, strings.TrimRight(string(buf), "\n\x00")); err != nil {
+				if err := w.EmitEvent(ipc.WorkerEventNameWorking, id, "", map[string]string{"output": strings.TrimRight(string(buf), "\n\x00")}); err != nil {
 					log.Errorf("cannot emit event: %v", err)
 				}
 			}
