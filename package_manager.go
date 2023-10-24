@@ -44,7 +44,11 @@ type PackageManager interface {
 // stdoutFunc is not nil, a pipe is attached to the command's stdout. Bytes are
 // read from stdout into a buffer and stdoutFunc is called. The same is true for
 // stderrFunc.
-func run(cmd *exec.Cmd, stdoutFunc func(buf []byte), stderrFunc func(buf []byte)) (stdout, stderr []byte, code int, err error) {
+func run(
+	cmd *exec.Cmd,
+	stdoutFunc func(buf []byte),
+	stderrFunc func(buf []byte),
+) (stdout, stderr []byte, code int, err error) {
 	outb := new(bytes.Buffer)
 	errb := new(bytes.Buffer)
 

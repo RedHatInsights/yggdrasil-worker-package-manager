@@ -19,12 +19,21 @@ func (p *PackageManagerDnf) Uninstall(name string) (stdout, stderr []byte, code 
 	return p.run("remove", name)
 }
 
-func (p *PackageManagerDnf) AddRepo(name string, content []byte) (stdout, stderr []byte, code int, err error) {
-	return nil, nil, -1, os.WriteFile(filepath.Join("/etc/yum.repos.d/", canonicalizeRepoName(name, ".repo")), content, 0644)
+func (p *PackageManagerDnf) AddRepo(
+	name string,
+	content []byte,
+) (stdout, stderr []byte, code int, err error) {
+	return nil, nil, -1, os.WriteFile(
+		filepath.Join("/etc/yum.repos.d/", canonicalizeRepoName(name, ".repo")),
+		content,
+		0644,
+	)
 }
 
 func (p *PackageManagerDnf) RemoveRepo(name string) (stdout, stderr []byte, code int, err error) {
-	return nil, nil, -1, os.Remove(filepath.Join("/etc/yum.repos.d/", canonicalizeRepoName(name, ".repo")))
+	return nil, nil, -1, os.Remove(
+		filepath.Join("/etc/yum.repos.d/", canonicalizeRepoName(name, ".repo")),
+	)
 }
 
 func (p *PackageManagerDnf) EnableRepo(name string) (stdout, stderr []byte, code int, err error) {
@@ -43,7 +52,10 @@ func (p *PackageManagerDnf) Stderr() chan []byte {
 	return p.stderr
 }
 
-func (p *PackageManagerDnf) run(command string, args ...string) (stdout, stderr []byte, code int, err error) {
+func (p *PackageManagerDnf) run(
+	command string,
+	args ...string,
+) (stdout, stderr []byte, code int, err error) {
 	cmdargs := []string{"--assumeyes", command}
 	cmdargs = append(cmdargs, args...)
 

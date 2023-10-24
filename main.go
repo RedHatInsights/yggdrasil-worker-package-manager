@@ -42,10 +42,22 @@ var (
 func main() {
 	fs := flag.NewFlagSet(filepath.Base(os.Args[0]), flag.ExitOnError)
 
-	fs.Var(&logLevel, "log-level", "log verbosity level (error (default), warn, info, debug, trace)")
-	fs.Var(&allowPatterns, "allow-pattern", "regular expression pattern to allow package operations\n(can be specified multiple times)")
+	fs.Var(
+		&logLevel,
+		"log-level",
+		"log verbosity level (error (default), warn, info, debug, trace)",
+	)
+	fs.Var(
+		&allowPatterns,
+		"allow-pattern",
+		"regular expression pattern to allow package operations\n(can be specified multiple times)",
+	)
 	fs.BoolVar(&version, "version", false, "show version info")
-	_ = fs.String("config", filepath.Join(ConfigDir, "config.toml"), "path to `file` containing configuration values (optional)")
+	_ = fs.String(
+		"config",
+		filepath.Join(ConfigDir, "config.toml"),
+		"path to `file` containing configuration values (optional)",
+	)
 
 	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarNoPrefix(), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser), ff.WithAllowMissingConfigFile(true)); err != nil {
 		log.Fatal(err)
@@ -68,7 +80,13 @@ func main() {
 		log.SetFlags(log.LstdFlags | log.Llongfile)
 	}
 
-	worker, err := worker.NewWorker("package_manager", false, map[string]string{"version": Version}, dataRx, nil)
+	worker, err := worker.NewWorker(
+		"package_manager",
+		false,
+		map[string]string{"version": Version},
+		dataRx,
+		nil,
+	)
 	if err != nil {
 		log.Fatalf("error: cannot create worker: %v", err)
 	}
@@ -83,7 +101,14 @@ func main() {
 	}
 }
 
-func dataRx(w *worker.Worker, addr string, id string, responseTo string, metadata map[string]string, data []byte) error {
+func dataRx(
+	w *worker.Worker,
+	addr string,
+	id string,
+	responseTo string,
+	metadata map[string]string,
+	data []byte,
+) error {
 	log.Debugf("received message: %v", id)
 	log.Tracef("%v", data)
 

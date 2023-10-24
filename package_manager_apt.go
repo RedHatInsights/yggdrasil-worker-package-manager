@@ -22,15 +22,22 @@ func (p *PackageManagerApt) Uninstall(name string) (stdout, stderr []byte, code 
 	return p.run("remove", name)
 }
 
-func (p *PackageManagerApt) AddRepo(sourceLine string, _ []byte) (stdout, stderr []byte, code int, err error) {
+func (p *PackageManagerApt) AddRepo(
+	sourceLine string,
+	_ []byte,
+) (stdout, stderr []byte, code int, err error) {
 	return p.EnableRepo(sourceLine)
 }
 
-func (p *PackageManagerApt) RemoveRepo(sourceLine string) (stdout, stderr []byte, code int, err error) {
+func (p *PackageManagerApt) RemoveRepo(
+	sourceLine string,
+) (stdout, stderr []byte, code int, err error) {
 	return p.DisableRepo(sourceLine)
 }
 
-func (p *PackageManagerApt) EnableRepo(sourceLine string) (stdout, stderr []byte, code int, err error) {
+func (p *PackageManagerApt) EnableRepo(
+	sourceLine string,
+) (stdout, stderr []byte, code int, err error) {
 	if err := os.MkdirAll(filepath.Base(sourcesFile), 0755); err != nil {
 		return nil, nil, -1, fmt.Errorf("cannot create sources list directory: %w", err)
 	}
@@ -42,7 +49,9 @@ func (p *PackageManagerApt) EnableRepo(sourceLine string) (stdout, stderr []byte
 	return nil, nil, 0, nil
 }
 
-func (p *PackageManagerApt) DisableRepo(sourceLine string) (stdout, stderr []byte, code int, err error) {
+func (p *PackageManagerApt) DisableRepo(
+	sourceLine string,
+) (stdout, stderr []byte, code int, err error) {
 	lines, err := readLines(sourcesFile)
 	if err != nil {
 		return nil, nil, -1, fmt.Errorf("cannot read sources list file: %w", err)
@@ -71,7 +80,10 @@ func (p *PackageManagerApt) Stderr() chan []byte {
 	return p.stderr
 }
 
-func (p *PackageManagerApt) run(command string, args ...string) (stdout, stderr []byte, code int, err error) {
+func (p *PackageManagerApt) run(
+	command string,
+	args ...string,
+) (stdout, stderr []byte, code int, err error) {
 	cmdargs := []string{"--assume-yes", command}
 	cmdargs = append(cmdargs, args...)
 	cmd := exec.Command("/usr/bin/apt-get", cmdargs...)
