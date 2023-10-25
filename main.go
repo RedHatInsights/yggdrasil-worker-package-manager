@@ -84,7 +84,6 @@ func main() {
 		"package_manager",
 		false,
 		map[string]string{"version": Version},
-		nil,
 		dataRx,
 		nil,
 	)

@@ -13,8 +13,8 @@ github.com/pelletier/go-toml v1.9.4 h1:tjENF6MfZAg8e4ZmZTeWaWiT2vXtsoO6+iuOjFhEC
 github.com/pelletier/go-toml v1.9.4/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/peterbourgon/ff/v3 v3.1.0 h1:5JAeDK5j/zhKFjyHEZQXwXBoDijERaos10RE+xamOsY=
 github.com/peterbourgon/ff/v3 v3.1.0/go.mod h1:XNJLY8EIl6MjMVjBS4F0+G0LYoAqs0DTa4rmHHukKDE=
-github.com/redhatinsights/yggdrasil v0.0.0-20231011123719-5130298ed3ac h1:rqRkjhJWxnNmmxCjxal5PrGuHtp93OCZn1PHPdQMCDQ=
-github.com/redhatinsights/yggdrasil v0.0.0-20231011123719-5130298ed3ac/go.mod h1:Rwya3pQvxCNI/2bjNQ9N6cHTMd2YKrRCJ2sENRawoBg=
+github.com/redhatinsights/yggdrasil v0.0.0-20230918163727-97cd578cc7c6 h1:YLX/bTYS5/BwZt7vw8vIAr3vqM8tioJr3vajhSlCpzg=
+github.com/redhatinsights/yggdrasil v0.0.0-20230918163727-97cd578cc7c6/go.mod h1:Rwya3pQvxCNI/2bjNQ9N6cHTMd2YKrRCJ2sENRawoBg=
 github.com/sgreben/flagvar v1.10.1 h1:ukN3zqVj9T9U7CiKG6owmejxswJYMbAg9Mxkhi1B4tw=
 github.com/sgreben/flagvar v1.10.1/go.mod h1:AxDmbFDIxZ4dHj2zg8LxuJn5CSwSS28iY/Wy56e+nhI=
 github.com/zcalusic/sysinfo v1.0.2 h1:nwTTo2a+WQ0NXwo0BGRojOJvJ/5XKvQih+2RrtWqfxc=
