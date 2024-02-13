@@ -1,6 +1,6 @@
 module github.com/redhatinsights/yggdrasil-worker-package-manager
 
-go 1.18
+go 1.19
 
 require (
 	git.sr.ht/~spc/go-log v0.0.0-20210611184941-ce2f05edb627
