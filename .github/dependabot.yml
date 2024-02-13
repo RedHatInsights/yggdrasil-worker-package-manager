@@ -8,11 +8,13 @@ updates:
   # Configuration for rhc go code
   - package-ecosystem: "gomod"
     directory: "/" # Location of go.mod and go.sum
+    target-branch: "yggdrasil-worker-package-manager-0.1"
     schedule:
       interval: "weekly"
 
   # Configuration for GitHub actions
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "yggdrasil-worker-package-manager-0.1"
     schedule:
       interval: "weekly"
