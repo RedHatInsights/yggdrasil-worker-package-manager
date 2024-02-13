@@ -24,6 +24,7 @@ import (
 
 func main() {
 	fs := flag.NewFlagSet(filepath.Base(os.Args[0]), flag.ExitOnError)
+	fileName, _ := strings.CutSuffix(fs.Name(), "-worker")
 
 	var (
 		socketAddr    = ""
@@ -34,7 +35,7 @@ func main() {
 	fs.StringVar(&socketAddr, "socket-addr", "", "dispatcher socket address")
 	fs.Var(&logLevel, "log-level", "log verbosity level (error (default), warn, info, debug, trace)")
 	fs.Var(&allowPatterns, "allow-pattern", "regular expression pattern to allow package operations\n(can be specified multiple times)")
-	_ = fs.String("config", filepath.Join(yggdrasil.SysconfDir, yggdrasil.LongName, "workers", fs.Name()+".toml"), "path to `file` containing configuration values (optional)")
+	_ = fs.String("config", filepath.Join(yggdrasil.SysconfDir, yggdrasil.LongName, "workers", fileName+".toml"), "path to `file` containing configuration values (optional)")
 
 	ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix("YGG"), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser))
 
