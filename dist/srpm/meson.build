@@ -22,7 +22,7 @@ tarball = custom_target('tarball',
     '--exclude', '.git',
     '--exclude', '.vscode',
     '--exclude', '.github',
-    '--exclude', '.copr',
+    '--exclude', '.packit.yaml',
     meson.project_source_root()
   ],
   output: '@0@-@1@.tar.gz'.format(meson.project_name(), meson.project_version())
