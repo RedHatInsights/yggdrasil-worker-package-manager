@@ -1,6 +1,6 @@
 %bcond_without check
 
-%global has_go_rpm_macros (0%{?fedora} || 0%{?rhel} >= 9)
+%global has_go_rpm_macros (0%{?fedora})
 
 # https://github.com/redhatinsights/yggdrasil-worker-package-manager
 %global goipath         github.com/redhatinsights/yggdrasil-worker-package-manager
