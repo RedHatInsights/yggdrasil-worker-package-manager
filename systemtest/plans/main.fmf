@@ -1,0 +1,16 @@
+summary: yggdrasil-worker-package-manager test suite
+description: |
+  This test plan runs yggdrasil-worker-package-manager tests.
+discover:
+    how: fmf
+
+prepare:
+    - name: Install packages
+      how: install
+      package:
+        - systemd
+        - yggdrasil
+        - yggdrasil-worker-package-manager
+
+execute:
+    how: tmt
