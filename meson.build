@@ -35,6 +35,10 @@ configure_file(
   install_dir: dbus.get_pkgconfig_variable('system_bus_services_dir')
 )
 
+install_data('com.redhat.Yggdrasil1.Worker1.package_manager.conf',
+  install_dir: join_paths(dbus.get_pkgconfig_variable('datadir'), 'dbus-1', 'system.d')
+)
+
 install_data('config.toml',
   install_dir: config_data.get('configdir')
 )

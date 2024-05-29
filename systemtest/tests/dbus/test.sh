@@ -27,7 +27,6 @@ busctl --system status com.redhat.Yggdrasil1
 echo '{"command":"install","name":"vim"}' | yggctl dispatch --worker package_manager -
 
 # Verify the worker started via bus-activation and can be introspected
-busctl --system status com.redhat.Yggdrasil1.Worker1.package_manager
 WORKER_UNIT=$(busctl --system status com.redhat.Yggdrasil1.Worker1.package_manager | grep ^Unit= | cut -f2 -d=)
 busctl --system introspect com.redhat.Yggdrasil1.Worker1.package_manager /com/redhat/Yggdrasil1/Worker1/package_manager com.redhat.Yggdrasil1.Worker1
 yggctl workers list
