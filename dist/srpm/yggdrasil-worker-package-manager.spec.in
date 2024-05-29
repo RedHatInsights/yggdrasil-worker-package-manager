@@ -98,6 +98,7 @@ export %gomodulesmode
 %{_libexecdir}/*
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_datadir}/dbus-1/system-services/*
+%{_datadir}/dbus-1/system.d/*
 
 %if %{has_go_rpm_macros}
 %gopkgfiles
