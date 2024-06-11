@@ -8,7 +8,7 @@ require (
 	github.com/peterbourgon/ff/v3 v3.4.0
 	github.com/redhatinsights/yggdrasil v0.0.0-20230918163727-97cd578cc7c6
 	github.com/sgreben/flagvar v1.10.1
-	github.com/zcalusic/sysinfo v1.0.2
+	github.com/zcalusic/sysinfo v1.1.0
 )
 
 require (
