@@ -5,6 +5,9 @@ set -x
 # Dump shell environment for context
 env
 
+# Reload DBus
+busctl --system call org.freedesktop.DBus / org.freedesktop.DBus ReloadConfig
+
 # Print relevant package info
 rpm -qi yggdrasil
 rpm -qi yggdrasil-worker-package-manager
