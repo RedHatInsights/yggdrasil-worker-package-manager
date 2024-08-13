@@ -88,6 +88,9 @@ export %gomodulesmode
 %meson_test
 %endif
 %endif
+
+%post
+busctl --system call org.freedesktop.DBus / org.freedesktop.DBus ReloadConfig
  
 %files
 %license LICENSE
