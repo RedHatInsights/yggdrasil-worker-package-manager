@@ -13,8 +13,8 @@ srpm_build_deps:
 
 actions:
   post-upstream-clone:
-    - go install golang.org/dl/go1.20.13@latest
-    - bash -c "$(go env GOPATH)/bin/go1.20.13 download"
+    - go install golang.org/dl/go1.21.13@latest
+    - bash -c "$(go env GOPATH)/bin/go1.21.13 download"
     - bash -c "PATH=$HOME/sdk/go1.20.13/bin:$PATH meson setup builddir -Dbuild_srpm=True -Dvendor=True"
     - meson compile tarball -C builddir
   get-current-version:
