@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN" "https://dbus.freedesktop.org/doc/busconfig.dtd">
+<busconfig>
+    <policy user="root">
+        <!-- Only root can own the Worker1.package_manager name. -->
+        <allow own="com.redhat.Yggdrasil1.Worker1.package_manager" />
+    </policy>
+    
+    <policy group="@worker_user@">
+        <!-- Only @worker_user@ can send messages to the Worker1 interface. -->
+        <allow send_destination="com.redhat.Yggdrasil1.Worker1.package_manager"
+            send_interface="com.redhat.Yggdrasil1.Worker1" />
+
+        <!-- Only @worker_user@ can send messages to the Properties interface. -->
+        <allow send_destination="com.redhat.Yggdrasil1.Worker1.package_manager"
+            send_interface="org.freedesktop.DBus.Properties" />
+
+        <!-- Only @worker_user@ can send messages to the Introspectable interface. -->
+        <allow send_destination="com.redhat.Yggdrasil1.Worker1.package_manager"
+            send_interface="org.freedesktop.DBus.Introspectable" />
+
+        <!-- Only @worker_user@ can send messages to the Peer interface. -->
+        <allow send_destination="com.redhat.Yggdrasil1.Worker1.package_manager"
+            send_interface="org.freedesktop.DBus.Peer" />
+    </policy>
+</busconfig>

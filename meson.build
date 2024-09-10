@@ -3,6 +3,7 @@ project('yggdrasil-worker-package-manager', version: '0.2.2')
 go = find_program('go')
 
 dbus = dependency('dbus-1')
+systemd = dependency('systemd')
 
 if get_option('vendor')
   meson.add_dist_script(join_paths('build-aux', 'vendor.sh'))
@@ -12,6 +13,7 @@ config_data = configuration_data(
   {
     'libexecdir': join_paths(get_option('prefix'), get_option('libexecdir')),
     'configdir': join_paths(get_option('sysconfdir'), meson.project_name()),
+    'worker_user': get_option('worker_user'),
   },
 )
 
@@ -37,24 +39,7 @@ custom_target(
   install_dir: join_paths(get_option('libexecdir')),
 )
 
-configure_file(
-  configuration: config_data,
-  input: 'com.redhat.Yggdrasil1.Worker1.package_manager.service.in',
-  output: 'com.redhat.Yggdrasil1.Worker1.package_manager.service',
-  install: true,
-  install_dir: dbus.get_variable(pkgconfig: 'system_bus_services_dir'),
-)
-
-install_data(
-  'com.redhat.Yggdrasil1.Worker1.package_manager.conf',
-  install_dir: join_paths(dbus.get_variable(pkgconfig: 'datadir'), 'dbus-1', 'system.d'),
-)
-
-install_data(
-  'com.redhat.Yggdrasil1.Worker1.package_manager.conf',
-  install_dir: join_paths(dbus.get_variable(pkgconfig: 'datadir'), 'dbus-1', 'system.d'),
-)
-
 install_data('config.toml', install_dir: config_data.get('configdir'))
 
+subdir('data')
 subdir('dist')
