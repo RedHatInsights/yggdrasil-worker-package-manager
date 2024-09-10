@@ -46,6 +46,7 @@ Source:         %{gosource}
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  meson
 BuildRequires:  pkgconfig(dbus-1)
+BuildRequires:  pkgconfig(systemd)
 BuildRequires:  golang >= 1.18
 
  
@@ -90,7 +91,13 @@ export %gomodulesmode
 %endif
 
 %post
-busctl --system call org.freedesktop.DBus / org.freedesktop.DBus ReloadConfig
+%systemd_post com.redhat.Yggdrasil1.Worker1.package_manager.service
+
+%preun
+%systemd_preun com.redhat.Yggdrasil1.Worker1.package_manager.service
+
+%postun
+%systemd_postun_with_restart com.redhat.Yggdrasil1.Worker1.package_manager.service
  
 %files
 %license LICENSE
@@ -102,6 +109,7 @@ busctl --system call org.freedesktop.DBus / org.freedesktop.DBus ReloadConfig
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_datadir}/dbus-1/system-services/*
 %{_datadir}/dbus-1/system.d/*
+%{_unitdir}/*
 
 %if %{has_go_rpm_macros}
 %gopkgfiles

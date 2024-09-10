@@ -1,0 +1,13 @@
+[Unit]
+Description=yggdrasil package_manager worker service
+Documentation=https://github.com/RedHatInsights/yggdrasil-worker-package-manager
+
+[Service]
+Type=dbus
+User=root
+Group=@worker_user@
+ExecStart=@libexecdir@/yggdrasil-worker-package-manager
+BusName=com.redhat.Yggdrasil1.Worker1.package_manager
+
+[Install]
+WantedBy=multi-user.target

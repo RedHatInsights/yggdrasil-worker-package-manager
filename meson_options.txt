@@ -22,3 +22,9 @@ option(
   value: false,
   description: 'Enable SRPM builds',
 )
+option(
+  'worker_user',
+  type: 'string',
+  value: 'yggdrasil-worker',
+  description: 'worker user name',
+)

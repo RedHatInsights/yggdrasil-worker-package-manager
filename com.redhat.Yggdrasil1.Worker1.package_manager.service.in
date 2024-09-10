@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=com.redhat.Yggdrasil1.Worker1.package_manager
-Exec=@libexecdir@/yggdrasil-worker-package-manager
