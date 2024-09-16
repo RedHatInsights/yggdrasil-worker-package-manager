@@ -6,7 +6,7 @@ require (
 	git.sr.ht/~spc/go-log v0.1.1
 	github.com/google/uuid v1.6.0
 	github.com/peterbourgon/ff/v3 v3.4.0
-	github.com/redhatinsights/yggdrasil v0.4.2
+	github.com/redhatinsights/yggdrasil v0.4.4
 	github.com/sgreben/flagvar v1.10.1
 	github.com/zcalusic/sysinfo v1.0.2
 )
