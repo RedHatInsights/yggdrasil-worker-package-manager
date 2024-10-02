@@ -43,12 +43,14 @@ jobs:
     owner: "@yggdrasil"
     project: latest
     targets:
-      - centos-stream-9
-      - centos-stream-10
-      - fedora-all
-      - rhel-8
-      - rhel-9
-      - rhel-10
+      - centos-stream-9-aarch64
+      - centos-stream-9-x86_64
+      - centos-stream-10-aarch64
+      - centos-stream-10-x86_64
+      - fedora-all-aarch64
+      - fedora-all-x86_64
+      - rhel-9-aarch64
+      - rhel-9-x86_64
 
   - job: tests
     trigger: pull_request
