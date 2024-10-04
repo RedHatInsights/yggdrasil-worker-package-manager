@@ -1,6 +1,7 @@
 module github.com/redhatinsights/yggdrasil-worker-package-manager
 
 go 1.21
+toolchain go1.22.5
 
 require (
 	git.sr.ht/~spc/go-log v0.1.1
@@ -8,7 +9,7 @@ require (
 	github.com/peterbourgon/ff/v3 v3.4.0
 	github.com/redhatinsights/yggdrasil v0.4.4
 	github.com/sgreben/flagvar v1.10.1
-	github.com/zcalusic/sysinfo v1.0.2
+	github.com/zcalusic/sysinfo v1.1.2
 )
 
 require (
