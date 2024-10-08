@@ -15,6 +15,9 @@ rpm -qi yggdrasil-worker-package-manager
 # Configure yggdrasil for local-dispatch only
 sed -i -e 's/protocol = .*$/protocol = "none"/' \
        -e '/server = .*/d' \
+       -e '/cert-file = .*/d' \
+       -e '/key-file = .*/d' \
+       -e '/facts-file = .*/d' \
        -e 's/log-level = .*/log-level = "debug"/' \
        /etc/yggdrasil/config.toml
 echo 'message-journal = ":memory:"' >> /etc/yggdrasil/config.toml
