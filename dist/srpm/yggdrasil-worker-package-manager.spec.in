@@ -36,7 +36,7 @@ the provided allow-pattern regular expressions.}
 %global godocs          README.md
 
 Name:           yggdrasil-worker-package-manager
-Release:        0%{?dist}
+Release:        %{?autorelease}%{!?autorelease:0%{?dist}}
 Summary:        Package manager worker for yggdrasil
  
 License:        GPL-3.0-only
