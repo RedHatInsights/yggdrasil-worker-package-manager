@@ -9,6 +9,7 @@ srpm_build_deps:
   - go-rpm-macros
   - meson
   - "pkgconfig(dbus-1)"
+  - "rpm_macro(forgemeta)"
   - rpm-build
 
 actions:

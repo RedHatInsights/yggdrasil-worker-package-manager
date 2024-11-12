@@ -6,6 +6,7 @@
 %global goipath         github.com/redhatinsights/yggdrasil-worker-package-manager
 Version:                @VERSION@
 %global commit          @COMMIT@
+%global date            %(date "+%Y%m%d")
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %global archivename     yggdrasil-worker-package-manager-%{version}
 
@@ -16,8 +17,9 @@ Version:                @VERSION@
 %global gomodulesmode GO111MODULES=off
 %global gosource %{gourl}/releases/download/%{version}/%{name}-%{version}.tar.gz
 %global gocompilerflags "-buildmode pie -compiler gc"
+%global scm git
+%forgemeta
 %endif
-
 
 %if 0%{?fedora}
 %global setup_flags -Dvendor=False
@@ -36,7 +38,7 @@ the provided allow-pattern regular expressions.}
 %global godocs          README.md
 
 Name:           yggdrasil-worker-package-manager
-Release:        0%{?dist}
+Release:        99%{?dist}
 Summary:        Package manager worker for yggdrasil
  
 License:        GPL-3.0-only
