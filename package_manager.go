@@ -6,7 +6,7 @@ import (
 	"io"
 	"os/exec"
 
-	"git.sr.ht/~spc/go-log"
+	"github.com/subpop/go-log"
 )
 
 type ExitError struct {
