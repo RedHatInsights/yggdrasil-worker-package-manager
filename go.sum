@@ -14,5 +14,7 @@ github.com/redhatinsights/yggdrasil v0.4.4 h1:WFJUAPD7yw79AFE4c36jvsXMqt8zlQqFgb
 github.com/redhatinsights/yggdrasil v0.4.4/go.mod h1:YahOUpZGK+GXLmlnfV+QpNkUqm4K3GZkFp6KwFqNHhs=
 github.com/sgreben/flagvar v1.10.1 h1:ukN3zqVj9T9U7CiKG6owmejxswJYMbAg9Mxkhi1B4tw=
 github.com/sgreben/flagvar v1.10.1/go.mod h1:AxDmbFDIxZ4dHj2zg8LxuJn5CSwSS28iY/Wy56e+nhI=
+github.com/subpop/go-log v0.1.2 h1:NgbZR6frmeDtC+96d+UxOkt4X/JxO626fokwL56Dff0=
+github.com/subpop/go-log v0.1.2/go.mod h1:uAEovif98swmWm/8qYGrzGFahUIRQ/KwlBUpJuoOdds=
 github.com/zcalusic/sysinfo v1.0.2 h1:nwTTo2a+WQ0NXwo0BGRojOJvJ/5XKvQih+2RrtWqfxc=
 github.com/zcalusic/sysinfo v1.0.2/go.mod h1:kluzTYflRWo6/tXVMJPdEjShsbPpsFRyy+p1mBQPC30=

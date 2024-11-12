@@ -11,7 +11,7 @@ import (
 	"strings"
 	"syscall"
 
-	"git.sr.ht/~spc/go-log"
+	"github.com/subpop/go-log"
 
 	"github.com/google/uuid"
 	"github.com/peterbourgon/ff/v3"
