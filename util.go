@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/subpop/go-log"
 	"os"
 	"strings"
 )
@@ -19,7 +20,13 @@ func readLines(name string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot open file for reading: %w", err)
 	}
-	defer file.Close()
+
+	defer func() {
+		closeErr := file.Close()
+		if closeErr != nil {
+			log.Errorf("cannot close file %s: %s", name, closeErr)
+		}
+	}()
 
 	var lines []string
 	scanner := bufio.NewScanner(file)
@@ -36,7 +43,7 @@ func readLines(name string) ([]string, error) {
 
 // writeLines writes lines to file name. If truncate is true, the file is
 // truncated before writing.
-func writeLines(name string, lines []string, truncate bool) error {
+func writeLines(name string, lines []string, truncate bool) (err error) {
 	var data []byte
 
 	for _, line := range lines {
@@ -50,11 +57,22 @@ func writeLines(name string, lines []string, truncate bool) error {
 		if err != nil {
 			return fmt.Errorf("cannot open file for appending: %w", err)
 		}
-		defer file.Close()
+
+		// When it is not possible to close the file, then return the error
+		// reported by the failed close() system call.
+		// This is very important in the situation when the system call close()
+		// returns EIO. This can be caused when the previously-uncommitted write(2)
+		// encountered an input/output error, resulting in the possible loss of data.
+		defer func() {
+			closeErr := file.Close()
+			if closeErr != nil {
+				err = closeErr
+			}
+		}()
 
 		if _, err := file.Write(data); err != nil {
 			return fmt.Errorf("cannot write to file: %w", err)
 		}
 	}
-	return nil
+	return err
 }
