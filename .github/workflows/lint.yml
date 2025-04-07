@@ -19,7 +19,7 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version: '=1.21.13'
-    - uses: golangci/golangci-lint-action@v6.5.0
+    - uses: golangci/golangci-lint-action@v7.0.0
       with:
         version: latest
         args: --verbose --timeout=3m
