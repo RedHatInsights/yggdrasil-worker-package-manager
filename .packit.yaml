@@ -14,9 +14,7 @@ srpm_build_deps:
 
 actions:
   post-upstream-clone:
-    - go install golang.org/dl/go1.21.13@latest
-    - bash -c "$(go env GOPATH)/bin/go1.21.13 download"
-    - bash -c "PATH=$HOME/sdk/go1.21.13/bin:$PATH meson setup builddir -Dbuild_srpm=True -Dvendor=True"
+    - meson setup builddir -Dbuild_srpm=True -Dvendor=True --wipe
     - meson compile tarball -C builddir
   get-current-version:
     - awk '/^Version:/ {print $2;}' builddir/dist/srpm/yggdrasil-worker-package-manager.spec
