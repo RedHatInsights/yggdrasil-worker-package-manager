@@ -14,9 +14,7 @@ srpm_build_deps:
 
 actions:
   post-upstream-clone:
-    - go install golang.org/dl/go1.21.13@latest
-    - bash -c "$(go env GOPATH)/bin/go1.21.13 download"
-    - bash -c "PATH=$HOME/sdk/go1.21.13/bin:$PATH meson setup builddir -Dbuild_srpm=True -Dvendor=True"
+    - meson setup builddir -Dbuild_srpm=True -Dvendor=True --wipe
     - meson compile tarball -C builddir
   get-current-version:
     - awk '/^Version:/ {print $2;}' builddir/dist/srpm/yggdrasil-worker-package-manager.spec
@@ -34,7 +32,6 @@ jobs:
       - centos-stream-9
       - centos-stream-10
       - fedora-all
-      - rhel-8
       - rhel-9
       - rhel-10
 
@@ -84,9 +81,6 @@ jobs:
     trigger: pull_request
     identifier: "unit/rhel"
     targets:
-      rhel-8-x86_64:
-        distros:
-          - RHEL-8-Nightly
       rhel-9-x86_64:
         distros:
           - RHEL-9-Nightly
