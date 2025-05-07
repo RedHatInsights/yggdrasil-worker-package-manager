@@ -84,20 +84,14 @@ jobs:
     trigger: pull_request
     identifier: "unit/rhel"
     targets:
-      rhel-8-x86_64:
-        distros:
-          - RHEL-8-Nightly
       rhel-9-x86_64:
         distros:
           - RHEL-9-Nightly
-      rhel-10-x86_64:
-        distros:
-          - RHEL-10-Nightly
     labels:
       - unit
     tf_extra_params:
       environments:
         - artifacts:
             - type: repository-file
-              id: https://copr.fedorainfracloud.org/coprs/g/yggdrasil/latest/repo/rhel-$releasever/group_yggdrasil-latest-rhel-$releasever.repo
+              id: https://copr.fedorainfracloud.org/coprs/g/yggdrasil/latest/repo/rhel-9/group_yggdrasil-latest-rhel-9.repo
     use_internal_tf: true
