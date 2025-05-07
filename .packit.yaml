@@ -34,7 +34,6 @@ jobs:
       - centos-stream-9
       - centos-stream-10
       - fedora-all
-      - rhel-8
       - rhel-9
       - rhel-10
 
@@ -84,9 +83,6 @@ jobs:
     trigger: pull_request
     identifier: "unit/rhel"
     targets:
-      rhel-8-x86_64:
-        distros:
-          - RHEL-8-Nightly
       rhel-9-x86_64:
         distros:
           - RHEL-9-Nightly
