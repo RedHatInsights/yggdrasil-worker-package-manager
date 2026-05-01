@@ -1,4 +1,4 @@
-project('yggdrasil-worker-package-manager', version: '0.2.3')
+project('yggdrasil-worker-package-manager', version : '0.2.4')
 
 go = find_program('go')
 
