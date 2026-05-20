@@ -84,7 +84,7 @@ func (p *PackageManagerApt) run(
 	command string,
 	args ...string,
 ) (stdout, stderr []byte, code int, err error) {
-	cmdargs := []string{"--assume-yes", command}
+	cmdargs := []string{"--assume-yes", command, "--"}
 	cmdargs = append(cmdargs, args...)
 	cmd := exec.Command("/usr/bin/apt-get", cmdargs...)
 	stdout, stderr, code, err = run(cmd, p.sendStdout, p.sendStderr)
