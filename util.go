@@ -3,9 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
+
+	"git.sr.ht/~spc/go-log"
 )
 
 // canonicalizeRepoName converts the string filename into a suitable filename.
@@ -20,7 +21,11 @@ func readLines(name string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot open file for reading: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Warnf("cannot close file %v: %v", name, err)
+		}
+	}()
 
 	var lines []string
 	scanner := bufio.NewScanner(file)
@@ -45,13 +50,17 @@ func writeLines(name string, lines []string, truncate bool) error {
 	}
 
 	if truncate {
-		return ioutil.WriteFile(name, data, 0644)
+		return os.WriteFile(name, data, 0644)
 	} else {
 		file, err := os.OpenFile(name, os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {
 			return fmt.Errorf("cannot open file for appending: %w", err)
 		}
-		defer file.Close()
+		defer func() {
+			if err := file.Close(); err != nil {
+				log.Warnf("cannot close file %v: %v", name, err)
+			}
+		}()
 
 		if _, err := file.Write(data); err != nil {
 			return fmt.Errorf("cannot write to file: %w", err)

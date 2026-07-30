@@ -20,6 +20,7 @@ import (
 	"github.com/sgreben/flagvar"
 	"github.com/zcalusic/sysinfo"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -37,7 +38,9 @@ func main() {
 	fs.Var(&allowPatterns, "allow-pattern", "regular expression pattern to allow package operations\n(can be specified multiple times)")
 	_ = fs.String("config", filepath.Join(yggdrasil.SysconfDir, yggdrasil.LongName, "workers", fileName+".toml"), "path to `file` containing configuration values (optional)")
 
-	ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix("YGG"), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser))
+	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix("YGG"), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(fftoml.Parser)); err != nil {
+		log.Fatalf("cannot parse flags: %v", err)
+	}
 
 	if logLevel.Value != "" {
 		l, err := log.ParseLevel(logLevel.Value)
@@ -51,12 +54,15 @@ func main() {
 		log.SetFlags(log.LstdFlags | log.Llongfile)
 	}
 
-	// Dial the dispatcher on its well-known address.
-	conn, err := grpc.Dial(socketAddr, grpc.WithInsecure())
+	conn, err := grpc.NewClient(socketAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Warnf("cannot close dispatcher connection: %v", err)
+		}
+	}()
 
 	// Create a dispatcher client
 	c := pb.NewDispatcherClient(conn)
