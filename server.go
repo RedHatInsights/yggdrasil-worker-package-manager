@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/redhatinsights/yggdrasil/protocol"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Message struct {
@@ -154,11 +155,15 @@ func (s *Server) Send(ctx context.Context, d *protocol.Data) (*protocol.Receipt,
 }
 
 func (s *Server) returnData(d *protocol.Data) error {
-	conn, err := grpc.Dial(s.dispatchAddr, grpc.WithInsecure())
+	conn, err := grpc.NewClient(s.dispatchAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return fmt.Errorf("cannot dial dispatcher: %w", err)
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Warnf("cannot close dispatcher connection: %v", err)
+		}
+	}()
 
 	c := protocol.NewDispatcherClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
