@@ -1,6 +1,6 @@
 module github.com/redhatinsights/yggdrasil-worker-package-manager
 
-go 1.24.0
+go 1.25.0
 
 require (
 	git.sr.ht/~spc/go-log v0.0.0-20210611184941-ce2f05edb627
@@ -9,15 +9,15 @@ require (
 	github.com/redhatinsights/yggdrasil v0.0.0-20231018123955-1012f70169c0
 	github.com/sgreben/flagvar v1.10.1
 	github.com/zcalusic/sysinfo v0.0.0-20210905121133-6fa2f969a900
-	google.golang.org/grpc v1.79.3
+	google.golang.org/grpc v1.82.1
 )
 
 require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
-	golang.org/x/net v0.48.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
-	google.golang.org/protobuf v1.36.10 // indirect
+	golang.org/x/net v0.53.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
+	golang.org/x/text v0.39.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 )
