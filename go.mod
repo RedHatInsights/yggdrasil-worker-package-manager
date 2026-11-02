@@ -1,6 +1,6 @@
 module github.com/redhatinsights/yggdrasil-worker-package-manager
 
-go 1.24.0
+go 1.27
 
 require (
 	github.com/google/uuid v1.6.0
@@ -8,7 +8,7 @@ require (
 	github.com/redhatinsights/yggdrasil v0.4.10
 	github.com/sgreben/flagvar v1.10.1
 	github.com/subpop/go-log v0.1.2
-	github.com/zcalusic/sysinfo v1.0.2
+	github.com/zcalusic/sysinfo v1.2.1
 )
 
 require (
